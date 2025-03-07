@@ -1,0 +1,2054 @@
+git mv
+git restore 1.txt << restore file to before staging area state 
+git restore --staged 1.txt       << reverting changes from staging area
+
+------
+git branch -b featurebranch1
+* master
+git checkout -b featurebranch1
+git commit
+git commit
+git master
+git checkout master
+git commit
+git checkout -b featurebranch2
+git checkout featurebranch2
+git commit
+git commit
+git checkout master
+git commit
+----------------
+
+git branch dummybranch >> create and stay on same branch
+git branch -b dummybranch   >> create and switch
+
+cat .git/HEAD  >> to reference hash
+
+
+git branch -m not_dummybranch  >> To rename the branch , should be on same branch to do this oper
+git branch -d not_dummybranch  >> works if not_dummybranch  is empty , should be on other branch to do this operation
+git branch -D not_dummybranch  >> works if not_dummybranch  is not empty and need force remove , should be on other branch to do this operation
+
+
+--------------
+nani@git-practice:~$ git config --list --show-origin
+file:/home/nani/.gitconfig      user.name=Nani
+file:/home/nani/.gitconfig      user.email=nanidevsecops@email.com
+file:/home/nani/.gitconfig      credential.helper=store
+file:/home/nani/.gitconfig      init.defaultbranch=main
+file:.git/config        core.repositoryformatversion=0
+file:.git/config        core.filemode=true
+file:.git/config        core.bare=false
+file:.git/config        core.logallrefupdates=true
+file:.git/config        remote.origin.url=https://github.com/nanidevsecops/learn1.git
+file:.git/config        remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+nani@git-practice:~$ git config --list
+user.name=Nani
+user.email=nanidevsecops@email.com
+credential.helper=store
+init.defaultbranch=main
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+remote.origin.url=https://github.com/nanidevsecops/learn1.git
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+nani@git-practice:~$
+
+
+nani@git-practice:~$ #git config --global --unset user.name
+nani@git-practice:~$ #git config --global --remove-section user
+
+nani@git-practice:~$ #To check changes between working and staging area #git diff
+nani@git-practice:~$ #To check changes between staging and repo area #git diff --staged
+
+nani@git-practice:~/sampleproject$ git init
+Initialized empty Git repository in /home/nani/sampleproject/.git/
+nani@git-practice:~/sampleproject$
+nani@git-practice:~/sampleproject$ vi difftest.txt
+nani@git-practice:~/sampleproject$ git status
+On branch main
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+ difftest.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+nani@git-practice:~/sampleproject$ git add difftest.txt
+nani@git-practice:~/sampleproject$ git status
+On branch main
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+ new file:   difftest.txt
+
+nani@git-practice:~/sampleproject$ ls -ltr
+total 0
+-rw-r--r-- 1 nani nani 57 Jul 20 10:00 difftest.txt
+nani@git-practice:~/sampleproject$ vi difftest.txt
+nani@git-practice:~/sampleproject$ git diff
+diff --git a/difftest.txt b/difftest.txt
+index 4efbfa7..b9146f1 100644
+--- a/difftest.txt
++++ b/difftest.txt
+@@ -1 +1,2 @@
+-This line added working areaThis line added working area
++This line added working area
++This line added in staging area
+nani@git-practice:~/sampleproject$ cat difftest.txt
+This line added working area
+This line added in staging area
+nani@git-practice:~/sampleproject$
+
+nani@git-practice:~/sampleproject$ git diff --staged
+diff --git a/difftest.txt b/difftest.txt
+new file mode 100644
+index 0000000..4efbfa7
+--- /dev/null
++++ b/difftest.txt
+@@ -0,0 +1 @@
++This line added working areaThis line added working area
+nani@git-practice
+
+## index 0000000 && index 0000000 indicates nothig is present in staging area
+
+#SHA1 is 20 bytes in hexadecimal format
+
+-- From commit to get content --
+nani@git-practice:~/sampleproject$ git log
+commit a43af12b1bf88248f5b8e5554923a49162d8f10b (HEAD -> main)
+Author: Nani <nanidevsecops@email.com>
+Date:   Sat Jul 20 10:07:35 2024 +0530
+
+    first commit
+
+
+nani@git-practice:~/sampleproject$ git cat-file a43af12b1bf88248f5b8e5554923a49162d8f10b -p
+tree c97479fd215b7b4118f723968a7318b58827093c
+author Nani <nanidevsecops@email.com> 1721450255 +0530
+committer Nani <nanidevsecops@email.com> 1721450255 +0530
+
+first commit
+nani@git-practice:~/sampleproject$
+
+nani@git-practice:~/sampleproject$ git cat-file c97479fd215b7b4118f723968a7318b58827093c -p
+100644 blob b9146f157f0bb2e1c3de56f2afedf0ebdf934c53 difftest.txt
+nani@git-practice:~/sampleproject$ git cat-file b9146f157f0bb2e1c3de56f2afedf0ebdf934c53 -p
+This line added working area
+This line added in staging area
+nani@git-practice:~/sampleproject$
+
+-----
+======> mv and git mv
+when we use mv --> file will be marked as deleted in working area and modified as staging area => have to commit 2 times to get ==> file renamed 
+instaed use git mv --> directly fill wll be marked as reamed 
+
+
+nani@git-practice:~/sampleproject$ mv difftest.txt mvdifftest.txt
+nani@git-practice:~/sampleproject$ git status
+On branch main
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+ deleted:    difftest.txt
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+ mvdifftest.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+nani@git-practice:~/sampleproject$ git add mvdifftest.txt
+nani@git-practice:~/sampleproject$ git status
+On branch main
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+ new file:   mvdifftest.txt
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+ deleted:    difftest.txt
+
+nani@git-practice:~/sampleproject$ git add difftest.txt
+nani@git-practice:~/sampleproject$ git status
+On branch main
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+ renamed:    difftest.txt -> mvdifftest.txt
+
+nani@git-practice:~/sampleproject$
+
+nani@git-practice:~/sampleproject$ git commit -m "git mv testing"
+[main 21e51f1] git mv testing
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename difftest.txt => mvdifftest.txt (100%)
+nani@git-practice:~/sampleproject$ git status
+On branch main
+nothing to commit, working tree clean
+nani@git-practice:~/sampleproject$
+
+nani@git-practice:~/sampleproject$ git mv mvdifftest.txt difftest.txt
+nani@git-practice:~/sampleproject$ git status
+On branch main
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+ renamed:    mvdifftest.txt -> difftest.txt
+
+nani@git-practice:~/sampleproject$ git commit -m "git mv testing working"
+[main 5d7ca07] git mv testing working
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename mvdifftest.txt => difftest.txt (100%)
+nani@git-practice:~/sampleproject$
+nani@git-practice:~/sampleproject$ git status
+On branch main
+nothing to commit, working tree clean
+nani@git-practice:~/sampleproject$
+
+
+------ restore from staging to working and discard changes -------
+
+nani@git-practice:~/sampleproject$ vi difftest.txt
+nani@git-practice:~/sampleproject$
+nani@git-practice:~/sampleproject$ git status
+On branch main
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+ modified:   difftest.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+nani@git-practice:~/sampleproject$
+nani@git-practice:~/sampleproject$ git add difftest.txt
+nani@git-practice:~/sampleproject$ git status
+On branch main
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+ modified:   difftest.txt
+
+nani@git-practice:~/sampleproject$ # To unstage ## git restore --staged <file>
+nani@git-practice:~/sampleproject$ git restore --staged difftest.txt
+nani@git-practice:~/sampleproject$ git status
+On branch main
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+ modified:   difftest.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+nani@git-practice:~/sampleproject$ #To discard changes in working directory ## git restore <file>
+nani@git-practice:~/sampleproject$ git restore difftest.txt
+nani@git-practice:~/sampleproject$ git status
+On branch main
+nothing to commit, working tree clean
+nani@git-practice:~/sampleproject$
+
+------------------------
+
+Recovering deleted content
+nani@git-practice:~/sampleproject$ git branch
+* main
+nani@git-practice:~/sampleproject$ ls -ltr
+total 0
+-rw-r--r-- 1 nani nani 61 Jul 20 10:32 difftest.txt
+nani@git-practice:~/sampleproject$ git rm difftest.txt
+rm 'difftest.txt'
+nani@git-practice:~/sampleproject$ git status
+On branch main
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+ deleted:    difftest.txt
+
+nani@git-practice:~/sampleproject$ git restore difftest.txt^C
+nani@git-practice:~/sampleproject$
+nani@git-practice:~/sampleproject$ git commit -m "removing difftest.txt"
+[main f528f91] removing difftest.txt
+ 1 file changed, 2 deletions(-)
+ delete mode 100644 difftest.txt
+nani@git-practice:~/sampleproject$
+nani@git-practice:~/sampleproject$ git status
+On branch main
+nothing to commit, working tree clean
+nani@git-practice:~/sampleproject$
+nani@git-practice:~/sampleproject$ git log --oneline
+f528f91 (HEAD -> main) removing difftest.txt
+5d7ca07 git mv testing working
+21e51f1 git mv testing
+a43af12 first commit
+nani@git-practice:~/sampleproject$ git cat-file f528f91 -p
+tree 4b825dc642cb6eb9a060e54bf8d69288fbee4904
+parent 5d7ca07a2a7698e11027597367ce100c301025ae
+author Nani <nanidevsecops@email.com> 1721453012 +0530
+committer Nani <nanidevsecops@email.com> 1721453012 +0530
+
+removing difftest.txt
+nani@git-practice:~/sampleproject$ git cat-file 4b825dc642cb6eb9a060e54bf8d69288fbee4904 -p
+nani@git-practice:~/sampleproject$ git cat-file 5d7ca07a2a7698e11027597367ce100c301025ae -p
+tree c97479fd215b7b4118f723968a7318b58827093c
+parent 21e51f152bb90ef13816a06ef3b663013c1673d5
+author Nani <nanidevsecops@email.com> 1721451463 +0530
+committer Nani <nanidevsecops@email.com> 1721451463 +0530
+
+git mv testing working
+nani@git-practice:~/sampleproject$ git cat-file 21e51f152bb90ef13816a06ef3b663013c1673d5 -p
+tree b72f07a2047d726f88b77ddef11e35ab9b39998a
+parent a43af12b1bf88248f5b8e5554923a49162d8f10b
+author Nani <nanidevsecops@email.com> 1721451412 +0530
+committer Nani <nanidevsecops@email.com> 1721451412 +0530
+
+git mv testing
+nani@git-practice:~/sampleproject$ git cat-file a43af12b1bf88248f5b8e5554923a49162d8f10b -p
+tree c97479fd215b7b4118f723968a7318b58827093c
+author Nani <nanidevsecops@email.com> 1721450255 +0530
+committer Nani <nanidevsecops@email.com> 1721450255 +0530
+
+first commit
+nani@git-practice:~/sampleproject$ git cat-file c97479fd215b7b4118f723968a7318b58827093c -p
+100644 blob b9146f157f0bb2e1c3de56f2afedf0ebdf934c53 difftest.txt
+nani@git-practice:~/sampleproject$ git cat-file b9146f157f0bb2e1c3de56f2afedf0ebdf934c53 -p
+This line added working area
+This line added in staging area
+nani@git-practice:~/sampleproject$
+
+--------------
+For short hash code
+
+nani@git-practice:~/sampleproject$ git show 195a5fe
+commit 195a5fe2940f9bfd185a194f864529bb64267ca9 (HEAD -> main)
+Merge: a4e8d52 bf8a6fd
+Author: Nani <nanidevsecops@email.com>
+Date:   Sat Jul 20 11:24:14 2024 +0530
+
+    merging
+
+diff --cc brnachtesting.txt
+index 62fd5fc,3514643..8824ac8
+--- a/brnachtesting.txt
++++ b/brnachtesting.txt
+@@@ -1,4 -1,4 +1,5 @@@
+  This line from Main branch first lineThis line from Main branch first linA
+  line added for direct commit on repoA
+  line added for direct commit on repo
+ +adding line after switch from login_feature to this main again
++ Adding line for login_feature
+nani@git-practice:~/sampleproject$
+
+----
+
+#### direct from working area to locarepo ==> must add first time and then next directly do with -a -m
+nani@git-practice:~/sampleproject$ vi brnachtesting.txt
+nani@git-practice:~/sampleproject$ git status
+On branch main
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+ brnachtesting.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+nani@git-practice:~/sampleproject$ git commit -a -m "First update on main branch"
+On branch main
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+ brnachtesting.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+nani@git-practice:~/sampleproject$ git add .
+nani@git-practice:~/sampleproject$ git commit -a -m "First update on main branch"
+[main 17a21fb] First update on main branch
+ 1 file changed, 1 insertion(+)
+ create mode 100644 brnachtesting.txt
+nani@git-practice:~/sampleproject$ vi brnachtesting.txt
+nani@git-practice:~/sampleproject$ git commit -a -m "direct update on main branch"
+[main 6846f1b] direct update on main branch
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+nani@git-practice:~/sampleproject$ git status
+On branch main
+nothing to commit, working tree clean
+nani@git-practice:~/sampleproject$
+
+---------------------
+
+
+
+ branch
+ 1 file changed, 1 insertion(+)
+nani@git-practice:~/sampleproject$ git log --oneline
+bf8a6fd (HEAD -> login_feature) First commit on login feature  branch
+6846f1b (main) direct update on main branch
+17a21fb First update on main branch
+f528f91 removing difftest.txt
+5d7ca07 git mv testing working
+21e51f1 git mv testing
+a43af12 first commit
+nani@git-practice:~/sampleproject$ ls
+brnachtesting.txt
+nani@git-practice:~/sampleproject$ git checkout master
+error: pathspec 'master' did not match any file(s) known to git
+nani@git-practice:~/sampleproject$ git branch
+* login_feature
+  main
+nani@git-practice:~/sampleproject$
+nani@git-practice:~/sampleproject$ git checkout main
+Switched to branch 'main'
+nani@git-practice:~/sampleproject$ git branch
+  login_feature
+* main
+nani@git-practice:~/sampleproject$ cat brnachtesting.txt
+This line from Main branch first lineThis line from Main branch first linA
+line added for direct commit on repoA
+line added for direct commit on repo
+nani@git-practice:~/sampleproject$ git log --online
+fatal: unrecognized argument: --online
+nani@git-practice:~/sampleproject$ git log --oneline
+6846f1b (HEAD -> main) direct update on main branch
+17a21fb First update on main branch
+f528f91 removing difftest.txt
+5d7ca07 git mv testing working
+21e51f1 git mv testing
+a43af12 first commit
+nani@git-practice:~/sampleproject$ git status
+On branch main
+nothing to commit, working tree clean
+nani@git-practice:~/sampleproject$ vi brnachtesting.txt
+nani@git-practice:~/sampleproject$ git status
+On branch main
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+ modified:   brnachtesting.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+nani@git-practice:~/sampleproject$
+nani@git-practice:~/sampleproject$ git log --oneline
+6846f1b (HEAD -> main) direct update on main branch
+17a21fb First update on main branch
+f528f91 removing difftest.txt
+5d7ca07 git mv testing working
+21e51f1 git mv testing
+a43af12 first commit
+nani@git-practice:~/sampleproject$ git commit -a -m "second commit on main branch"
+[main a4e8d52] second commit on main branch
+ 1 file changed, 1 insertion(+)
+nani@git-practice:~/sampleproject$ git log --oneline
+a4e8d52 (HEAD -> main) second commit on main branch
+6846f1b direct update on main branch
+17a21fb First update on main branch
+f528f91 removing difftest.txt
+5d7ca07 git mv testing working
+21e51f1 git mv testing
+a43af12 first commit
+nani@git-practice:~/sampleproject$ git branch
+  login_feature
+* main
+nani@git-practice:~/sampleproject$ git checkout login_feature
+Switched to branch 'login_feature'
+nani@git-practice:~/sampleproject$ git log --oneline
+bf8a6fd (HEAD -> login_feature) First commit on login feature  branch
+6846f1b direct update on main branch
+17a21fb First update on main branch
+f528f91 removing difftest.txt
+5d7ca07 git mv testing working
+21e51f1 git mv testing
+a43af12 first commit
+nani@git-practice:~/sampleproject$ git branch dummybranch
+nani@git-practice:~/sampleproject$ git branch
+  dummybranch
+* login_feature
+  main
+
+#### ==< Rename branch
+
+nani@git-practice:~/sampleproject$ git checkout  dummybranch
+Switched to branch 'dummybranch'
+nani@git-practice:~/sampleproject$ git branch
+* dummybranch
+  login_feature
+  main
+nani@git-practice:~/sampleproject$ git branch -m dummy_branch
+nani@git-practice:~/sampleproject$ git branch
+* dummy_branch
+  login_feature
+  main
+nani@git-practice:~/sampleproject$
+
+
+#### ==> to delete branch go to other branch and try
+
+nani@git-practice:~/sampleproject$ git branch -d dummy_branch
+error: Cannot delete branch 'dummy_branch' checked out at '/home/nani/sampleproject'
+nani@git-practice:~/sampleproject$ git checkout master
+error: pathspec 'master' did not match any file(s) known to git
+nani@git-practice:~/sampleproject$ git checkout main
+Switched to branch 'main'
+nani@git-practice:~/sampleproject$ git branch -d dummy_branch
+error: The branch 'dummy_branch' is not fully merged.
+If you are sure you want to delete it, run 'git branch -D dummy_branch'.
+nani@git-practice:~/sampleproject$ git branch -D dummy_branch
+Deleted branch dummy_branch (was bf8a6fd).
+nani@git-practice:~/sampleproject$
+
+-d for normal delete , -D for force delete
+
+---
+#### fast-forward megre and recursive merge
+  
+
+nani@git-practice:~/sampleproject$ git branch
+  login_feature
+* main
+nani@git-practice:~/sampleproject$ git merge login_feature
+Auto-merging brnachtesting.txt
+CONFLICT (content): Merge conflict in brnachtesting.txt
+Automatic merge failed; fix conflicts and then commit the result.
+nani@git-practice:~/sampleproject$ vi brnachtesting.txt
+nani@git-practice:~/sampleproject$ git status
+On branch main
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge)
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+ both modified:   brnachtesting.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+nani@git-practice:~/sampleproject$ git add .
+nani@git-practice:~/sampleproject$ git commit -m "merging"
+[main 195a5fe] merging
+nani@git-practice:~/sampleproject$ git status
+On branch main
+nothing to commit, working tree clean
+nani@git-practice:~/sampleproject$ git merge login_feature
+Already up to date.
+nani@git-practice:~/sampleproject$ cat brnachtesting.txt
+This line from Main branch first lineThis line from Main branch first linA
+line added for direct commit on repoA
+line added for direct commit on repo
+adding line after switch from login_feature to this main again
+Adding line for login_feature
+nani@git-practice:~/sampleproject$
+
+nani@git-practice:~/sampleproject$ git log --oneline
+195a5fe (HEAD -> main) merging
+a4e8d52 second commit on main branch
+bf8a6fd (login_feature) First commit on login feature  branch
+6846f1b direct update on main branch
+17a21fb First update on main branch
+f528f91 removing difftest.txt
+5d7ca07 git mv testing working
+21e51f1 git mv testing
+a43af12 first commit
+
+----
+
+ rebase ~ merge
+==> merge create a new commit,maintain commit history of branches involved in merging
+==> rebase append to existing head , does not maitain 
+use case: cleaning up commits before share ur branch,pulling changes from another without merge
+
+git log --oneline --graph
+
+combine all merges into a new commit using git rebase interactive
+
+---
+
+==> git amend
+
+
+
+nani@git-practice:~/sampleproject$ git log --oneline
+195a5fe (HEAD -> main) merging
+a4e8d52 second commit on main branch
+bf8a6fd (login_feature) First commit on login feature  branch
+6846f1b direct update on main branch
+17a21fb First update on main branch
+f528f91 removing difftest.txt
+5d7ca07 git mv testing working
+21e51f1 git mv testing
+a43af12 first commit
+nani@git-practice:~/sampleproject$ cat brnachtesting.txt
+This line from Main branch first lineThis line from Main branch first linA
+line added for direct commit on repoA
+line added for direct commit on repo
+adding line after switch from login_feature to this main again
+Adding line for login_feature
+nani@git-practice:~/sampleproject$ vi brnachtesting.txt
+nani@git-practice:~/sampleproject$ cat brnachtesting.txt
+This line from Main branch first lineThis line from Main branch first linA
+line added for direct commit on repoA
+line added for direct commit on repo
+adding line after switch from login_feature to this main again
+Adding line for login_feature
+try commit amend
+nani@git-practice:~/sampleproject$ git status
+On branch main
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+ modified:   brnachtesting.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+nani@git-practice:~/sampleproject$ git add brnachtesting.txt
+nani@git-practice:~/sampleproject$ git status
+On branch main
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+ modified:   brnachtesting.txt
+
+nani@git-practice:~/sampleproject$ git commit --amend
+[main 141d7bf] merging
+ Date: Sat Jul 20 11:24:14 2024 +0530
+nani@git-practice:~/sampleproject$ git commit --amend
+[main 8132372] trying new amend merging
+ Date: Sat Jul 20 11:24:14 2024 +0530
+nani@git-practice:~/sampleproject$ git log --oneline
+8132372 (HEAD -> main) trying new amend merging
+a4e8d52 second commit on main branch
+bf8a6fd (login_feature) First commit on login feature  branch
+6846f1b direct update on main branch
+17a21fb First update on main branch
+f528f91 removing difftest.txt
+5d7ca07 git mv testing working
+21e51f1 git mv testing
+a43af12 first commit
+nani@git-practice:~/sampleproject$
+
+-----------
+
+
+
+git cherry-pick like rebase 
+pick a commit from br1 and placing in br2
+* use case .. if u don't want to merge whole branch
+* drawback .. create duplicates 
+
+nani@git-practice:~/gitlearn$ mkdir git-cherrypick
+nani@git-practice:~/gitlearn$ cd git-cherrypick/
+nani@git-practice:~/gitlearn/git-cherrypick$ git init
+Initialized empty Git repository in /home/nani/gitlearn/git-cherrypick/.git/
+nani@git-practice:~/gitlearn/git-cherrypick$ touch index.txt
+nani@git-practice:~/gitlearn/git-cherrypick$ git add .
+nani@git-practice:~/gitlearn/git-cherrypick$ git commit -m "intial commit"
+[main (root-commit) 6468285] intial commit
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 index.txt
+nani@git-practice:~/gitlearn/git-cherrypick$ git log --oneline
+6468285 (HEAD -> main) intial commit
+nani@git-practice:~/gitlearn/git-cherrypick$ git branch 1.0
+nani@git-practice:~/gitlearn/git-cherrypick$ git branch 2.0
+nani@git-practice:~/gitlearn/git-cherrypick$ git branch 3.0
+nani@git-practice:~/gitlearn/git-cherrypick$ git branch
+  1.0
+  2.0
+  3.0
+* main
+nani@git-practice:~/gitlearn/git-cherrypick$ git checkout 3.0
+Switched to branch '3.0'
+nani@git-practice:~/gitlearn/git-cherrypick$ vi feature.txt
+nani@git-practice:~/gitlearn/git-cherrypick$ git status
+On branch 3.0
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+ feature.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+nani@git-practice:~/gitlearn/git-cherrypick$ git add feature.txt
+nani@git-practice:~/gitlearn/git-cherrypick$ git commit -m "working on feature"
+[3.0 ea98e62] working on feature
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 feature.txt
+nani@git-practice:~/gitlearn/git-cherrypick$ git log --oneline
+ea98e62 (HEAD -> 3.0) working on feature
+6468285 (main, 2.0, 1.0) intial commit
+nani@git-practice:~/gitlearn/git-cherrypick$ echo "fixed the bug in 3.0" > bugfix.txt
+nani@git-practice:~/gitlearn/git-cherrypick$ git status
+On branch 3.0
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+ bugfix.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+nani@git-practice:~/gitlearn/git-cherrypick$ git add bugfix.txt
+nani@git-practice:~/gitlearn/git-cherrypick$ git commit -m "bugfix done on 3.0"
+[3.0 8eaa81d] bugfix done on 3.0
+ 1 file changed, 1 insertion(+)
+ create mode 100644 bugfix.txt
+nani@git-practice:~/gitlearn/git-cherrypick$ git log --oneline
+8eaa81d (HEAD -> 3.0) bugfix done on 3.0
+ea98e62 working on feature
+6468285 (main, 2.0, 1.0) intial commit
+nani@git-practice:~/gitlearn/git-cherrypick$ git checkout 2.0
+Switched to branch '2.0'
+nani@git-practice:~/gitlearn/git-cherrypick$ git log --oneline
+6468285 (HEAD -> 2.0, main, 1.0) intial commit
+nani@git-practice:~/gitlearn/git-cherrypick$ ls -ltr
+total 0
+-rw-r--r-- 1 nani nani 0 Jul 20 13:43 index.txt
+nani@git-practice:~/gitlearn/git-cherrypick$ git cherry-pick 8eaa81d
+[2.0 178a853] bugfix done on 3.0
+ Date: Sat Jul 20 13:47:18 2024 +0530
+ 1 file changed, 1 insertion(+)
+ create mode 100644 bugfix.txt
+nani@git-practice:~/gitlearn/git-cherrypick$ ls -ltr
+total 0
+-rw-r--r-- 1 nani nani  0 Jul 20 13:43 index.txt
+-rw-r--r-- 1 nani nani 21 Jul 20 13:48 bugfix.txt
+nani@git-practice:~/gitlearn/git-cherrypick$ git log --oneline
+178a853 (HEAD -> 2.0) bugfix done on 3.0
+6468285 (main, 1.0) intial commit
+nani@git-practice:~/gitlearn/git-cherrypick$ git checkout 1.0
+Switched to branch '1.0'
+nani@git-practice:~/gitlearn/git-cherrypick$ ls -ltr
+total 0
+-rw-r--r-- 1 nani nani 0 Jul 20 13:43 index.txt
+nani@git-practice:~/gitlearn/git-cherrypick$ git log --oneline
+6468285 (HEAD -> 1.0, main) intial commit
+nani@git-practice:~/gitlearn/git-cherrypick$ git cherry-pick 8eaa81d
+[1.0 32e0725] bugfix done on 3.0
+ Date: Sat Jul 20 13:47:18 2024 +0530
+ 1 file changed, 1 insertion(+)
+ create mode 100644 bugfix.txt
+nani@git-practice:~/gitlearn/git-cherrypick$ ls -ltr
+total 0
+-rw-r--r-- 1 nani nani  0 Jul 20 13:43 index.txt
+-rw-r--r-- 1 nani nani 21 Jul 20 13:49 bugfix.txt
+nani@git-practice:~/gitlearn/git-cherrypick$ git log --oneline
+32e0725 (HEAD -> 1.0) bugfix done on 3.0
+6468285 (main) intial commit
+nani@git-practice:~/gitlearn/git-cherrypick$
+
+-----
+
+
+nani@git-practice:~/gitlearn$ mkdir git-reset
+nani@git-practice:~/gitlearn$ cd git-reset/
+nani@git-practice:~/gitlearn/git-reset$ git init
+Initialized empty Git repository in /home/nani/gitlearn/git-reset/.git/
+nani@git-practice:~/gitlearn/git-reset$ touch feature.txt
+nani@git-practice:~/gitlearn/git-reset$ git add .
+nani@git-practice:~/gitlearn/git-reset$ git commit -m "create feature file"
+[main (root-commit) 9be7b1a] create feature file
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 feature.txt
+nani@git-practice:~/gitlearn/git-reset$ git log --oneline
+9be7b1a (HEAD -> main) create feature file
+nani@git-practice:~/gitlearn/git-reset$ vi feature.txt
+nani@git-practice:~/gitlearn/git-reset$ git add .
+nani@git-practice:~/gitlearn/git-reset$ git commit -m "Started working on feature"
+[main 47c207e] Started working on feature
+ 1 file changed, 1 insertion(+)
+nani@git-practice:~/gitlearn/git-reset$ git log --oneline
+47c207e (HEAD -> main) Started working on feature
+9be7b1a create feature file
+nani@git-practice:~/gitlearn/git-reset$
+nani@git-practice:~/gitlearn/git-reset$ vi feature.txt
+nani@git-practice:~/gitlearn/git-reset$ git add .
+nani@git-practice:~/gitlearn/git-reset$ git commit -m "Some improvement working on feature"
+[main 16190a1] Some improvement working on feature
+ 1 file changed, 1 insertion(+)
+nani@git-practice:~/gitlearn/git-reset$ git log --oneline
+16190a1 (HEAD -> main) Some improvement working on feature
+47c207e Started working on feature
+9be7b1a create feature file
+nani@git-practice:~/gitlearn/git-reset$ ## I don't want the working feature code
+nani@git-practice:~/gitlearn/git-reset$ git status
+On branch main
+nothing to commit, working tree clean
+nani@git-practice:~/gitlearn/git-reset$ ls -ltr
+total 0
+-rw-r--r-- 1 nani nani 70 Jul 20 14:11 feature.txt
+nani@git-practice:~/gitlearn/git-reset$ git reset 9be7b1a
+Unstaged changes after reset:
+M feature.txt
+nani@git-practice:~/gitlearn/git-reset$ cat feature.txt
+Started working on featureStarted working on feature
+some improvement
+nani@git-practice:~/gitlearn/git-reset$ git status
+On branch main
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+ modified:   feature.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+nani@git-practice:~/gitlearn/git-reset$ git log --oneline
+9be7b1a (HEAD -> main) create feature file
+nani@git-practice:~/gitlearn/git-reset$ git reset 9be7b1a --hard
+HEAD is now at 9be7b1a create feature file
+nani@git-practice:~/gitlearn/git-reset$ git log --oneline
+9be7b1a (HEAD -> main) create feature file
+nani@git-practice:~/gitlearn/git-reset$ ls -ltr
+total 0
+-rw-r--r-- 1 nani nani 0 Jul 20 14:14 feature.txt
+nani@git-practice:~/gitlearn/git-reset$ cat feature.txt
+nani@git-practice:~/gitlearn/git-reset$
+
+---
+
+stash - store something safely in a hidden place
+
+git stash - u don't want to make a commit of half-done work and want to switch, git stash allows you,enables to switch without commit
+without stash:
+- if u try to switch 
+   * branch will carry the changes
+   * git will not allow to switch the br and asks commit or stash the changes
+
+
+nani@git-practice:~/gitlearn$ cd git-stash/
+nani@git-practice:~/gitlearn/git-stash$ git init
+Initialized empty Git repository in /home/nani/gitlearn/git-stash/.git/
+nani@git-practice:~/gitlearn/git-stash$ vi index.txt
+nani@git-practice:~/gitlearn/git-stash$ git add .
+nani@git-practice:~/gitlearn/git-stash$ git commit -m "created index file"
+[main (root-commit) 5c3c27d] created index file
+ 1 file changed, 1 insertion(+)
+ create mode 100644 index.txt
+nani@git-practice:~/gitlearn/git-stash$ cat index.txt
+
+nani@git-practice:~/gitlearn/git-stash$ git status
+On branch main
+nothing to commit, working tree clean
+nani@git-practice:~/gitlearn/git-stash$ git checkout -b feature
+Switched to a new branch 'feature'
+nani@git-practice:~/gitlearn/git-stash$ ls -ltr
+total 0
+-rw-r--r-- 1 nani nani 1 Jul 20 14:23 index.txt
+nani@git-practice:~/gitlearn/git-stash$ touch feature.txt
+nani@git-practice:~/gitlearn/git-stash$ git add .
+nani@git-practice:~/gitlearn/git-stash$ git status
+On branch feature
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+ new file:   feature.txt
+
+nani@git-practice:~/gitlearn/git-stash$ git restore --staged feature.txt
+nani@git-practice:~/gitlearn/git-stash$ git status
+On branch feature
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+ feature.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+nani@git-practice:~/gitlearn/git-stash$ git checkout main
+Switched to branch 'main'
+nani@git-practice:~/gitlearn/git-stash$ vat index.txt
+Command 'vat' not found, did you mean:
+  command 'vt' from deb vt (0.57721+ds-3)
+  command 'pat' from deb dist (1:3.5-236-1)
+  command 'vam' from deb vim-addon-manager (0.5.10)
+  command 'cat' from deb coreutils (8.32-4.1ubuntu1)
+  command 'vit' from deb vit (2.1.0-2)
+  command 'at' from deb at (3.2.5-1ubuntu1)
+  command 'vax' from deb simh (3.8.1-6.1)
+  command 'vcat' from deb atfs (1.4pl6-15)
+  command 'iat' from deb iat (0.1.3-7build1)
+  command 'dat' from deb liballegro4-dev (2:4.4.3.1-2)
+Try: sudo apt install <deb name>
+nani@git-practice:~/gitlearn/git-stash$ cat index.txt
+
+nani@git-practice:~/gitlearn/git-stash$ echo "changed index" > index.txt
+nani@git-practice:~/gitlearn/git-stash$ git status
+On branch main
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+ modified:   index.txt
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+ feature.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+nani@git-practice:~/gitlearn/git-stash$ git add index.txt
+nani@git-practice:~/gitlearn/git-stash$ git commit -m "updated index file"
+[main ea2883f] updated index file
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+nani@git-practice:~/gitlearn/git-stash$ cat index.txt
+changed index
+nani@git-practice:~/gitlearn/git-stash$ git log --oneline
+ea2883f (HEAD -> main) updated index file
+5c3c27d (feature) created index file
+nani@git-practice:~/gitlearn/git-stash$ git branch
+  feature
+* main
+nani@git-practice:~/gitlearn/git-stash$ git checkout feature
+Switched to branch 'feature'
+nani@git-practice:~/gitlearn/git-stash$ ls -ltr
+total 0
+-rw-r--r-- 1 nani nani 0 Jul 20 14:24 feature.txt
+-rw-r--r-- 1 nani nani 1 Jul 20 14:28 index.txt
+nani@git-practice:~/gitlearn/git-stash$ cat index.txt
+
+nani@git-practice:~/gitlearn/git-stash$ echo "index changed in future branch"
+index changed in future branch
+nani@git-practice:~/gitlearn/git-stash$ git status
+On branch feature
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+ feature.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+nani@git-practice:~/gitlearn/git-stash$ git checkout main
+Switched to branch 'main'
+nani@git-practice:~/gitlearn/git-stash$ cat index.txt
+changed index
+nani@git-practice:~/gitlearn/git-stash$ echo "2nd update on index file" >> index.txt
+nani@git-practice:~/gitlearn/git-stash$ git status
+On branch main
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+ modified:   index.txt
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+ feature.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+nani@git-practice:~/gitlearn/git-stash$ git checkout feature
+error: Your local changes to the following files would be overwritten by checkout:
+ index.txt
+Please commit your changes or stash them before you switch branches.
+Aborting
+nani@git-practice:~/gitlearn/git-stash$ cat index.txt
+changed index
+2nd update on index file
+nani@git-practice:~/gitlearn/git-stash$ git log --oneline
+ea2883f (HEAD -> main) updated index file
+5c3c27d (feature) created index file
+nani@git-practice:~/gitlearn/git-stash$ git stash
+Saved working directory and index state WIP on main: ea2883f updated index file
+nani@git-practice:~/gitlearn/git-stash$ git stash list
+stash@{0}: WIP on main: ea2883f updated index file
+nani@git-practice:~/gitlearn/git-stash$ git checkout feature
+Switched to branch 'feature'
+nani@git-practice:~/gitlearn/git-stash$ git status
+On branch feature
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+ feature.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+nani@git-practice:~/gitlearn/git-stash$ git stash list
+
+stash@{0}: WIP on main: ea2883f updated index file
+nani@git-practice:~/gitlearn/git-stash$
+nani@git-practice:~/gitlearn/git-stash$ git stash pop
+Auto-merging index.txt
+CONFLICT (content): Merge conflict in index.txt
+On branch feature
+Unmerged paths:
+  (use "git restore --staged <file>..." to unstage)
+  (use "git add <file>..." to mark resolution)
+ both modified:   index.txt
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+ feature.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+The stash entry is kept in case you need it again.
+nani@git-practice:~/gitlearn/git-stash$ git stash list
+stash@{0}: WIP on main: ea2883f updated index file
+nani@git-practice:~/gitlearn/git-stash$ git add .
+nani@git-practice:~/gitlearn/git-stash$ git commit -m "something tried"
+[feature d1b0bc5] something tried
+ 2 files changed, 5 insertions(+)
+ create mode 100644 feature.txt
+nani@git-practice:~/gitlearn/git-stash$ ls -ltr
+total 0
+-rw-r--r-- 1 nani nani  0 Jul 20 14:24 feature.txt
+-rw-r--r-- 1 nani nani 97 Jul 20 14:34 index.txt
+nani@git-practice:~/gitlearn/git-stash$ cat index.txt
+<<<<<<< Updated upstream
+
+=======
+changed index
+2nd update on index file
+>>>>>>> Stashed changes
+nani@git-practice:~/gitlearn/git-stash$ git status
+On branch feature
+nothing to commit, working tree clean
+nani@git-practice:~/gitlearn/git-stash$ git stash list
+stash@{0}: WIP on main: ea2883f updated index file
+nani@git-practice:~/gitlearn/git-stash$ git stash pop
+Auto-merging index.txt
+CONFLICT (content): Merge conflict in index.txt
+On branch feature
+Unmerged paths:
+  (use "git restore --staged <file>..." to unstage)
+  (use "git add <file>..." to mark resolution)
+ both modified:   index.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+The stash entry is kept in case you need it again.
+nani@git-practice:~/gitlearn/git-stash$ git merge feature
+error: Merging is not possible because you have unmerged files.
+hint: Fix them up in the work tree, and then use 'git add/rm <file>'
+hint: as appropriate to mark resolution and make a commit.
+fatal: Exiting because of an unresolved conflict.
+nani@git-practice:~/gitlearn/git-stash$ cd ..
+nani@git-practice:~/gitlearn$ rm -rf git-stash/
+nani@git-practice:~/gitlearn$
+nani@git-practice:~/gitlearn$
+nani@git-practice:~/gitlearn$
+nani@git-practice:~/gitlearn$ echo "2nd update on index file" >> index.txt ^C
+nani@git-practice:~/gitlearn$
+nani@git-practice:~/gitlearn$
+nani@git-practice:~/gitlearn$
+nani@git-practice:~/gitlearn$ mkdir git-stash
+nani@git-practice:~/gitlearn$ cd git-stash/
+nani@git-practice:~/gitlearn/git-stash$ git init
+Initialized empty Git repository in /home/nani/gitlearn/git-stash/.git/
+nani@git-practice:~/gitlearn/git-stash$ touch index.txt
+nani@git-practice:~/gitlearn/git-stash$ git add .
+nani@git-practice:~/gitlearn/git-stash$ git commit -m "create index file"
+[main (root-commit) a18b6e6] create index file
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 index.txt
+nani@git-practice:~/gitlearn/git-stash$
+nani@git-practice:~/gitlearn/git-stash$
+nani@git-practice:~/gitlearn/git-stash$ git log --oneline
+a18b6e6 (HEAD -> main) create index file
+nani@git-practice:~/gitlearn/git-stash$ git checkout -b feature
+Switched to a new branch 'feature'
+nani@git-practice:~/gitlearn/git-stash$ ls -ltr
+total 0
+-rw-r--r-- 1 nani nani 0 Jul 20 21:00 index.txt
+nani@git-practice:~/gitlearn/git-stash$ echo "created feature file" > feature.txt
+nani@git-practice:~/gitlearn/git-stash$ ls
+feature.txt  index.txt
+nani@git-practice:~/gitlearn/git-stash$ git status
+On branch feature
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+ feature.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+nani@git-practice:~/gitlearn/git-stash$ git checkout main
+Switched to branch 'main'
+nani@git-practice:~/gitlearn/git-stash$ git status
+On branch main
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+ feature.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+nani@git-practice:~/gitlearn/git-stash$ git checkout feature
+Switched to branch 'feature'
+nani@git-practice:~/gitlearn/git-stash$ git add .
+nani@git-practice:~/gitlearn/git-stash$ git commit -m "feature WIP"
+[feature a102b8d] feature WIP
+ 1 file changed, 1 insertion(+)
+ create mode 100644 feature.txt
+nani@git-practice:~/gitlearn/git-stash$ git checkout main
+Switched to branch 'main'
+nani@git-practice:~/gitlearn/git-stash$ vi index.txt
+nani@git-practice:~/gitlearn/git-stash$ git add .
+nani@git-practice:~/gitlearn/git-stash$ git commit -m "index file updated"
+[main 20a5620] index file updated
+ 1 file changed, 1 insertion(+)
+nani@git-practice:~/gitlearn/git-stash$ git checkout feature
+Switched to branch 'feature'
+nani@git-practice:~/gitlearn/git-stash$ git status
+On branch feature
+nothing to commit, working tree clean
+nani@git-practice:~/gitlearn/git-stash$ git log --oneline
+a102b8d (HEAD -> feature) feature WIP
+a18b6e6 create index file
+nani@git-practice:~/gitlearn/git-stash$ vi index.txt
+nani@git-practice:~/gitlearn/git-stash$ git status
+On branch feature
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+ modified:   index.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+nani@git-practice:~/gitlearn/git-stash$ git checkout main
+error: Your local changes to the following files would be overwritten by checkout:
+ index.txt
+Please commit your changes or stash them before you switch branches.
+Aborting
+nani@git-practice:~/gitlearn/git-stash$ ls -ltr
+total 0
+-rw-r--r-- 1 nani nani 21 Jul 20 21:03 feature.txt
+-rw-r--r-- 1 nani nani 53 Jul 20 21:04 index.txt
+nani@git-practice:~/gitlearn/git-stash$ cat index.txt
+index file deature updatedindex file deature updated
+nani@git-practice:~/gitlearn/git-stash$ git branch
+* feature
+  main
+nani@git-practice:~/gitlearn/git-stash$ git stash
+Saved working directory and index state WIP on feature: a102b8d feature WIP
+nani@git-practice:~/gitlearn/git-stash$ git stash
+No local changes to save
+nani@git-practice:~/gitlearn/git-stash$ git stash list
+stash@{0}: WIP on feature: a102b8d feature WIP
+nani@git-practice:~/gitlearn/git-stash$ git log --oneline
+a102b8d (HEAD -> feature) feature WIP
+a18b6e6 create index file
+nani@git-practice:~/gitlearn/git-stash$ git checkout main
+Switched to branch 'main'
+nani@git-practice:~/gitlearn/git-stash$ git status
+On branch main
+nothing to commit, working tree clean
+nani@git-practice:~/gitlearn/git-stash$ git checkout feature
+Switched to branch 'feature'
+nani@git-practice:~/gitlearn/git-stash$ git status
+On branch feature
+nothing to commit, working tree clean
+nani@git-practice:~/gitlearn/git-stash$ git stash list
+stash@{0}: WIP on feature: a102b8d feature WIP
+nani@git-practice:~/gitlearn/git-stash$ git stash pop
+On branch feature
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+ modified:   index.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+Dropped refs/stash@{0} (36c6d04f248cf2a77a783b70a5355ef935e4ed07)
+nani@git-practice:~/gitlearn/git-stash$ git stash list
+nani@git-practice:~/gitlearn/git-stash$
+nani@git-practice:~/gitlearn/git-stash$ git stash save "modified index"
+Saved working directory and index state On feature: modified index
+nani@git-practice:~/gitlearn/git-stash$ git stash list
+stash@{0}: On feature: modified index
+nani@git-practice:~/gitlearn/git-stash$ ## when use pop it deletes entry from stash list, to keep entry on list use "apply"
+nani@git-practice:~/gitlearn/git-stash$
+nani@git-practice:~/gitlearn/git-stash$ git stash apply stash@{0}
+On branch feature
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+ modified:   index.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+nani@git-practice:~/gitlearn/git-stash$
+nani@git-practice:~/gitlearn/git-stash$ git stash list
+stash@{0}: On feature: modified index
+nani@git-practice:~/gitlearn/git-stash$
+nani@git-practice:~/gitlearn/git-stash$ git reset HEAD --hard
+HEAD is now at a102b8d feature WIP
+nani@git-practice:~/gitlearn/git-stash$ git checkout main
+Switched to branch 'main'
+nani@git-practice:~/gitlearn/git-stash$ git stash list
+stash@{0}: On feature: modified index
+nani@git-practice:~/gitlearn/git-stash$ git stash apply stash@{0}
+Auto-merging index.txt
+CONFLICT (content): Merge conflict in index.txt
+On branch main
+Unmerged paths:
+  (use "git restore --staged <file>..." to unstage)
+  (use "git add <file>..." to mark resolution)
+ both modified:   index.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+nani@git-practice:~/gitlearn/git-stash$ cat index.txt
+<<<<<<< Updated upstream
+changed indexchanged index
+=======
+index file deature updatedindex file deature updated
+>>>>>>> Stashed changes
+nani@git-practice:~/gitlearn/git-stash$ git stash apply
+index.txt: needs merge
+nani@git-practice:~/gitlearn/git-stash$ vi  index.txt
+nani@git-practice:~/gitlearn/git-stash$ git stash apply
+index.txt: needs merge
+nani@git-practice:~/gitlearn/git-stash$ vi  index.txt
+nani@git-practice:~/gitlearn/git-stash$ git status
+On branch main
+Unmerged paths:
+  (use "git restore --staged <file>..." to unstage)
+  (use "git add <file>..." to mark resolution)
+ both modified:   index.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+nani@git-practice:~/gitlearn/git-stash$ git add .
+nani@git-practice:~/gitlearn/git-stash$ git status
+On branch main
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+ modified:   index.txt
+
+nani@git-practice:~/gitlearn/git-stash$ git stash apply
+Auto-merging index.txt
+CONFLICT (content): Merge conflict in index.txt
+On branch main
+Unmerged paths:
+  (use "git restore --staged <file>..." to unstage)
+  (use "git add <file>..." to mark resolution)
+ both modified:   index.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+nani@git-practice:~/gitlearn/git-stash$ git status
+On branch main
+Unmerged paths:
+  (use "git restore --staged <file>..." to unstage)
+  (use "git add <file>..." to mark resolution)
+ both modified:   index.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+nani@git-practice:~/gitlearn/git-stash$ cat index.txt
+<<<<<<< Updated upstream
+changed indexchanged index
+=======
+>>>>>>> Stashed changes
+index file deature updatedindex file deature updated
+nani@git-practice:~/gitlearn/git-stash$ vi  index.txt
+nani@git-practice:~/gitlearn/git-stash$
+nani@git-practice:~/gitlearn/git-stash$ git add .
+nani@git-practice:~/gitlearn/git-stash$ git commit -m "update during commit"
+[main 7bbcc0f] update during commit
+ 1 file changed, 1 insertion(+)
+nani@git-practice:~/gitlearn/git-stash$ git stash list
+stash@{0}: On feature: modified index
+nani@git-practice:~/gitlearn/git-stash$ git stash show
+ index.txt | 1 +
+ 1 file changed, 1 insertion(+)
+nani@git-practice:~/gitlearn/git-stash$ git stash show -p
+diff --git a/index.txt b/index.txt
+index e69de29..3221a4e 100644
+--- a/index.txt
++++ b/index.txt
+@@ -0,0 +1 @@
++index file deature updatedindex file deature updated
+nani@git-practice:~/gitlearn/git-stash$ git stash show stash@{0} -p
+diff --git a/index.txt b/index.txt
+index e69de29..3221a4e 100644
+--- a/index.txt
++++ b/index.txt
+@@ -0,0 +1 @@
++index file deature updatedindex file deature updated
+nani@git-practice:~/gitlearn/git-stash$ git stash drop stash@{0}
+Dropped stash@{0} (3918058b1b8d47ce87d1db95756b87d1f997d45e)
+nani@git-practice:~/gitlearn/git-stash$ # to delete all stash list ### git stash clear
+nani@git-practice:~/gitlearn/git-stash$
+nani@git-practice:~/gitlearn/git-stash$ #To create stash as separate brach #### git stash branch new_feature stash@{0}
+nani@git-practice:~/gitlearn/git-stash$
+nani@git-practice:~/gitlearn/git-stash$
+
+-----
+
+git checkout vs git switch
+
+checkout can be moved to commit (Detach Head) where as with git switch it is not possible
+
+nani@git-practice:~/gitlearn/git-stash$ git branch
+  feature
+* main
+nani@git-practice:~/gitlearn/git-stash$
+nani@git-practice:~/gitlearn/git-stash$ git switch feature
+Switched to branch 'feature'
+nani@git-practice:~/gitlearn/git-stash$ git branch
+* feature
+  main
+nani@git-practice:~/gitlearn/git-stash$ git switch -c login
+Switched to a new branch 'login'
+nani@git-practice:~/gitlearn/git-stash$
+nani@git-practice:~/gitlearn/git-stash$ git branch
+  feature
+* login
+  main
+nani@git-practice:~/gitlearn/git-stash$
+
+---
+
+git revert vs reset
+==> if changes are shared ==> use revert
+==> if changes are local ==> use reset
+
+---
+
+nani@git-practice:~/gitlearn$ git remote
+origin
+nani@git-practice:~/gitlearn$ git remote  -v
+origin https://github.com/nanidevsecops/learn1.git (fetch)
+origin https://github.com/nanidevsecops/learn1.git (push)
+nani@git-practice:~/gitlearn$
+nani@git-practice:~/gitlearn$ git remote add origin git remote add origin git@github.com:nanidevsecops/remote_repo.git^C
+nani@git-practice:~/gitlearn$ git remote add origin git@github.com:nanidevsecops/remote_repo.git
+error: remote origin already exists.
+nani@git-practice:~/gitlearn$ git remote add remoteorigin git@github.com:nanidevsecops/remote_repo.git
+nani@git-practice:~/gitlearn$ git remote  -v
+origin https://github.com/nanidevsecops/learn1.git (fetch)
+origin https://github.com/nanidevsecops/learn1.git (push)
+remoteorigin git@github.com:nanidevsecops/remote_repo.git (fetch)
+remoteorigin git@github.com:nanidevsecops/remote_repo.git (push)
+nani@git-practice:~/gitlearn$ git branch -M main
+nani@git-practice:~/gitlearn$ git remote remove remoteorigin
+nani@git-practice:~/gitlearn$ git remote  -v
+origin https://github.com/nanidevsecops/learn1.git (fetch)
+origin https://github.com/nanidevsecops/learn1.git (push)
+nani@git-practice:~/gitlearn$
+
+nani@git-practice:~/gitlearn$ git remote  -v
+origin https://github.com/nanidevsecops/learn1.git (fetch)
+origin https://github.com/nanidevsecops/learn1.git (push)
+nani@git-practice:~/gitlearn$ git remote  rename origin remotelearn
+nani@git-practice:~/gitlearn$ git remote  -v
+remotelearn https://github.com/nanidevsecops/learn1.git (fetch)
+remotelearn https://github.com/nanidevsecops/learn1.git (push)
+nani@git-practice:~/gitlearn$
+----
+
+Branching
+git push origin new_branch:main ==> used to commit in 1 branch to push to other remote branch
+
+nani@git-practice:~$ mkdir gitpush
+nani@git-practice:~$ cd git
+-bash: cd: git: No such file or directory
+nani@git-practice:~$ cd gitpush/
+nani@git-practice:~/gitpush$ git init
+Initialized empty Git repository in /home/nani/gitpush/.git/
+nani@git-practice:~/gitpush$ touch pushfile.txt
+nani@git-practice:~/gitpush$ git add .
+nani@git-practice:~/gitpush$ git commit -m "create push file"
+[main (root-commit) d50429f] create push file
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 pushfile.txt
+nani@git-practice:~/gitpush$ git remote add origin git@github.com:nanidevsecops/remote_repo.git
+nani@git-practice:~/gitpush$ git remote -v
+origin git@github.com:nanidevsecops/remote_repo.git (fetch)
+origin git@github.com:nanidevsecops/remote_repo.git (push)
+nani@git-practice:~/gitpush$ git log
+commit d50429f6871677858ddd97692e1de93006f2f907 (HEAD -> main)
+Author: Nani <nanidevsecops@email.com>
+Date:   Sat Jul 20 22:20:11 2024 +0530
+
+    create push file
+nani@git-practice:~/gitpush$ git log --oneline
+d50429f (HEAD -> main) create push file
+nani@git-practice:~/gitpush$
+nani@git-practice:~/gitpush$
+nani@git-practice:~/gitpush$ git push -u origin main
+Enumerating objects: 3, done.
+Counting objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 218 bytes | 36.00 KiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0), pack-reused 0
+To github.com:nanidevsecops/remote_repo.git
+ * [new branch]      main -> main
+Branch 'main' set up to track remote branch 'main' from 'origin'.
+nani@git-practice:~/gitpush$
+nani@git-practice:~/gitpush$ touchn index.txt
+Command 'touchn' not found, did you mean:
+  command 'touch' from deb coreutils (8.32-4.1ubuntu1)
+Try: sudo apt install <deb name>
+nani@git-practice:~/gitpush$ touch index.txt
+nani@git-practice:~/gitpush$ git add .
+nani@git-practice:~/gitpush$ git add "created index file"
+fatal: pathspec 'created index file' did not match any files
+nani@git-practice:~/gitpush$ git commit -m  "created index file"
+[main 68fb7de] created index file
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 index.txt
+nani@git-practice:~/gitpush$ git push -u origin main
+Enumerating objects: 3, done.
+Counting objects: 100% (3/3), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (2/2), 249 bytes | 49.00 KiB/s, done.
+Total 2 (delta 0), reused 0 (delta 0), pack-reused 0
+To github.com:nanidevsecops/remote_repo.git
+   d50429f..68fb7de  main -> main
+Branch 'main' set up to track remote branch 'main' from 'origin'.
+nani@git-practice:~/gitpush$
+nani@git-practice:~/gitpush$
+nani@git-practice:~/gitpush$ git branch
+* main
+nani@git-practice:~/gitpush$ git switch -c new_branch
+Switched to a new branch 'new_branch'
+nani@git-practice:~/gitpush$ ls -ltr
+total 0
+-rw-r--r-- 1 nani nani 0 Jul 20 22:19 pushfile.txt
+-rw-r--r-- 1 nani nani 0 Jul 20 22:23 index.txt
+nani@git-practice:~/gitpush$ touch branchfile.txt
+nani@git-practice:~/gitpush$
+nani@git-practice:~/gitpush$
+nani@git-practice:~/gitpush$ git add .
+nani@git-practice:~/gitpush$ git commit -m "new branch file added"
+[new_branch 41b1a25] new branch file added
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 branchfile.txt
+nani@git-practice:~/gitpush$  git push origin -u new_branch
+Enumerating objects: 3, done.
+Counting objects: 100% (3/3), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (2/2), 258 bytes | 64.00 KiB/s, done.
+Total 2 (delta 0), reused 0 (delta 0), pack-reused 0
+remote:
+remote: Create a pull request for 'new_branch' on GitHub by visiting:
+remote:      https://github.com/nanidevsecops/remote_repo/pull/new/new_branch
+remote:
+To github.com:nanidevsecops/remote_repo.git
+ * [new branch]      new_branch -> new_branch
+Branch 'new_branch' set up to track remote branch 'new_branch' from 'origin'.
+nani@git-practice:~/gitpush$ ls
+branchfile.txt  index.txt  pushfile.txt
+nani@git-practice:~/gitpush$
+nani@git-practice:~/gitpush$ touch niks.txt
+nani@git-practice:~/gitpush$ git add .
+nani@git-practice:~/gitpush$ git commit -m "created niks file for testing br switching save"
+[new_branch 781f3de] created niks file for testing br switching save
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 niks.txt
+nani@git-practice:~/gitpush$
+nani@git-practice:~/gitpush$ git push origin new_branch:main
+Enumerating objects: 3, done.
+Counting objects: 100% (3/3), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (2/2), 257 bytes | 36.00 KiB/s, done.
+Total 2 (delta 1), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To github.com:nanidevsecops/remote_repo.git
+   68fb7de..781f3de  new_branch -> main
+nani@git-practice:~/gitpush$
+----
+
+# -u to set remote brach or establish link between localbranch to remote branch
+
+nani@git-practice:~/gitlearn$ mkdir git-upstream
+nani@git-practice:~/gitlearn$ cd git-upstream/
+nani@git-practice:~/gitlearn/git-upstream$ git init
+Initialized empty Git repository in /home/nani/gitlearn/git-upstream/.git/
+nani@git-practice:~/gitlearn/git-upstream$ touch index.txt
+nani@git-practice:~/gitlearn/git-upstream$ git remote add originupstream git@github.com:nanidevsecops/git-upstream.git
+nani@git-practice:~/gitlearn/git-upstream$ git remote -v
+originupstream  git@github.com:nanidevsecops/git-upstream.git (fetch)
+originupstream  git@github.com:nanidevsecops/git-upstream.git (push)
+nani@git-practice:~/gitlearn/git-upstream$ git add .
+nani@git-practice:~/gitlearn/git-upstream$ git commit -m "index file created"
+[main (root-commit) 8cb49f8] index file created
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 index.txt
+nani@git-practice:~/gitlearn/git-upstream$
+nani@git-practice:~/gitlearn/git-upstream$ git push -u originupstream main
+Enumerating objects: 3, done.
+Counting objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 218 bytes | 27.00 KiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0), pack-reused 0
+To github.com:nanidevsecops/git-upstream.git
+ * [new branch]      main -> main
+Branch 'main' set up to track remote branch 'main' from 'originupstream'.
+nani@git-practice:~/gitlearn/git-upstream$
+nani@git-practice:~/gitlearn/git-upstream$ git branch
+* main
+nani@git-practice:~/gitlearn/git-upstream$
+nani@git-practice:~/gitlearn/git-upstream$ git switch -c new_branch
+Switched to a new branch 'new_branch'
+nani@git-practice:~/gitlearn/git-upstream$ ls
+index.txt
+nani@git-practice:~/gitlearn/git-upstream$ touch niks.txt
+nani@git-practice:~/gitlearn/git-upstream$ git add .
+nani@git-practice:~/gitlearn/git-upstream$ git commit -m "niks file added in new_branch"
+[new_branch e36169f] niks file added in new_branch
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 niks.txt
+nani@git-practice:~/gitlearn/git-upstream$ git push
+fatal: No configured push destination.
+Either specify the URL from the command-line or configure a remote repository using
+
+    git remote add <name> <url>
+
+and then push using the remote name
+
+    git push <name>
+
+nani@git-practice:~/gitlearn/git-upstream$ git push new_branch
+fatal: 'new_branch' does not appear to be a git repository
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+nani@git-practice:~/gitlearn/git-upstream$ git branch
+  main
+* new_branch
+nani@git-practice:~/gitlearn/git-upstream$
+nani@git-practice:~/gitlearn/git-upstream$ git push
+fatal: No configured push destination.
+Either specify the URL from the command-line or configure a remote repository using
+
+    git remote add <name> <url>
+
+and then push using the remote name
+
+    git push <name>
+
+nani@git-practice:~/gitlearn/git-upstream$ git push -u originupstream remote_new_branch
+error: src refspec remote_new_branch does not match any
+error: failed to push some refs to 'github.com:nanidevsecops/git-upstream.git'
+nani@git-practice:~/gitlearn/git-upstream$ git push -u originupstream new_branch
+Enumerating objects: 3, done.
+Counting objects: 100% (3/3), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (2/2), 253 bytes | 84.00 KiB/s, done.
+Total 2 (delta 0), reused 0 (delta 0), pack-reused 0
+remote:
+remote: Create a pull request for 'new_branch' on GitHub by visiting:
+remote:      https://github.com/nanidevsecops/git-upstream/pull/new/new_branch
+remote:
+To github.com:nanidevsecops/git-upstream.git
+ * [new branch]      new_branch -> new_branch
+Branch 'new_branch' set up to track remote branch 'new_branch' from 'originupstream'.
+nani@git-practice:~/gitlearn/git-upstream$ git branch
+  main
+* new_branch
+nani@git-practice:~/gitlearn/git-upstream$ touch cherry.txt
+nani@git-practice:~/gitlearn/git-upstream$ git add .
+nani@git-practice:~/gitlearn/git-upstream$ git commit -m "remote branch switch"
+[new_branch d2a9031] remote branch switch
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 cherry.txt
+nani@git-practice:~/gitlearn/git-upstream$ git push -u originupstream new_branch:main
+Enumerating objects: 3, done.
+Counting objects: 100% (3/3), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (2/2), 257 bytes | 64.00 KiB/s, done.
+Total 2 (delta 0), reused 0 (delta 0), pack-reused 0
+To github.com:nanidevsecops/git-upstream.git
+   8cb49f8..d2a9031  new_branch -> main
+Branch 'new_branch' set up to track remote branch 'main' from 'originupstream'.
+nani@git-practice:~/gitlearn/git-upstream$
+nani@git-practice:~/gitlearn/git-upstream$ git log --oneline
+d2a9031 (HEAD -> new_branch, originupstream/main) remote branch switch
+e36169f (originupstream/new_branch) niks file added in new_branch
+8cb49f8 (main) index file created
+nani@git-practice:~/gitlearn/git-upstream$ git checkout new_branch
+Already on 'new_branch'
+Your branch is up to date with 'originupstream/main'.
+nani@git-practice:~/gitlearn/git-upstream$
+
+
+nani@git-practice:~/gitlearn/git-upstream$ git branch
+  main
+* new_branch
+nani@git-practice:~/gitlearn/git-upstream$ git branch -r
+  originupstream/main
+  originupstream/new_branch
+nani@git-practice:~/gitlearn/git-upstream$
+---
+
+
+nani@git-practice:~/gitlearn$ cd git-branches/
+nani@git-practice:~/gitlearn/git-branches$ git clone git@github.com:nanidevsecops/git-branches.git
+Cloning into 'git-branches'...
+remote: Enumerating objects: 3, done.
+remote: Counting objects: 100% (3/3), done.
+remote: Total 3 (delta 0), reused 0 (delta 0), pack-reused 0
+Receiving objects: 100% (3/3), done.
+nani@git-practice:~/gitlearn/git-branches$ ls
+git-branches
+nani@git-practice:~/gitlearn/git-branches$ cd git-branches/
+nani@git-practice:~/gitlearn/git-branches/git-branches$ git remote -v
+origin git@github.com:nanidevsecops/git-branches.git (fetch)
+origin git@github.com:nanidevsecops/git-branches.git (push)
+nani@git-practice:~/gitlearn/git-branches/git-branches$
+nani@git-practice:~/gitlearn/git-branches/git-branches$ git branch
+* main
+nani@git-practice:~/gitlearn/git-branches/git-branches$ git branch -r
+  origin/HEAD -> origin/main
+  origin/branch1
+  origin/branch2
+  origin/branch3
+  origin/main
+nani@git-practice:~/gitlearn/git-branches/git-branches$ git checkout origin/branch1
+Note: switching to 'origin/branch1'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at 3cf0e46 Initial commit
+nani@git-practice:~/gitlearn/git-branches/git-branches$ git switch -
+Switched to branch 'main'
+Your branch is up to date with 'origin/main'.
+nani@git-practice:~/gitlearn/git-branches/git-branches$ git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+nani@git-practice:~/gitlearn/git-branches/git-branches$ git branch -r
+  origin/HEAD -> origin/main
+  origin/branch1
+  origin/branch2
+  origin/branch3
+  origin/main
+nani@git-practice:~/gitlearn/git-branches/git-branches$ git switch nani
+fatal: invalid reference: nani
+nani@git-practice:~/gitlearn/git-branches/git-branches$ git switch branch1
+Branch 'branch1' set up to track remote branch 'branch1' from 'origin'.
+Switched to a new branch 'branch1'
+nani@git-practice:~/gitlearn/git-branches/git-branches$ ### git switch <somebranch> ==> it check for existing if found it creats and link with new br
+nani@git-practice:~/gitlearn/git-branches/git-branches$ git status
+On branch branch1
+Your branch is up to date with 'origin/branch1'.
+
+nothing to commit, working tree clean
+nani@git-practice:~/gitlearn/git-branches/git-branches$ git branch -r
+  origin/HEAD -> origin/main
+  origin/branch1
+  origin/branch2
+  origin/branch3
+  origin/main
+nani@git-practice:~/gitlearn/git-branches/git-branches$ git switch origin/branch2
+fatal: a branch is expected, got remote branch 'origin/branch2'
+nani@git-practice:~/gitlearn/git-branches/git-branches$
+
+
+----
+
+git fetch (get updates upto local,working won't be touched) , it gets new branches ==> update the remote tracking branch with latest changes from the remote repo
+git pull (gets update to local) ==> git fetch + git merge ==> update my current br with whatever changes are on remote tracking br
+
+tags ==> labels to commits
+
+----
+
+git tag examples 
+nani@git-practice:~/gitlearn$ git clone git@github.com:facebook/react.git
+Cloning into 'react'...
+remote: Enumerating objects: 326106, done.
+remote: Total 326106 (delta 0), reused 0 (delta 0), pack-reused 326106
+Receiving objects: 100% (326106/326106), 525.53 MiB | 7.96 MiB/s, done.
+Resolving deltas: 100% (232425/232425), done.
+Updating files: 100% (6494/6494), done.
+nani@git-practice:~/gitlearn$ cd react/
+nani@git-practice:~/gitlearn/react$ git tag -l
+0.14.10
+1.2.5
+15.3.1
+15.3.2
+16.0.0-beta.1
+16.0.0-beta.3
+16.0.0-beta.4
+16.0.0-beta.5
+16.1.0
+16.1.0-beta
+16.1.0-beta.1
+16.1.0-rc
+status
+v0.0.0-88ada9819
+v0.0.0-d7382b6c4
+v0.0.0-experimental-27659559e
+v0.0.0-experimental-8b155d261
+v0.0.0-experimental-aae83a4b9
+v0.0.0-experimental-d7382b6c4
+v0.10.0
+v0.10.0-rc1
+v0.11.0
+v0.11.0-rc1
+v0.11.1
+v0.11.2
+v0.12.0
+v0.12.0-rc1
+v0.12.1
+v0.12.2
+v0.13.0
+v0.13.0-rc1
+v0.13.0-rc2
+v0.13.1
+v0.13.2
+v0.13.3
+v0.14.0
+v0.14.0-beta1
+v0.14.0-beta2
+v0.14.0-beta3
+v0.14.0-rc1
+v0.14.1
+v0.14.2
+v0.14.3
+nani@git-practice:~/gitlearn/react$ git tag -l beta
+nani@git-practice:~/gitlearn/react$ git tag -l beta*
+nani@git-practice:~/gitlearn/react$ git tag -l *beta*
+16.0.0-beta.1
+16.0.0-beta.3
+16.0.0-beta.4
+16.0.0-beta.5
+16.1.0-beta
+16.1.0-beta.1
+v0.14.0-beta1
+v0.14.0-beta2
+v0.14.0-beta3
+nani@git-practice:~/gitlearn/react$ git checkout v0.14.3
+Updating files: 100% (7391/7391), done.
+Note: switching to 'v0.14.3'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at c389c1def5 v0.14.3
+nani@git-practice:~/gitlearn/react$ git switch -c branch_from_v0.14.3
+Switched to a new branch 'branch_from_v0.14.3'
+nani@git-practice:~/gitlearn/react$ git diff v0.14.3 v0.14.2
+diff --git a/.eslintignore b/.eslintignore
+index 11bddecc6c..c20a6aa20e 100644
+--- a/.eslintignore
++++ b/.eslintignore
+@@ -16,4 +16,4 @@ packages/react-codemod/test/
+ packages/react-codemod/scripts/
+ packages/react-codemod/build/
+ packages/react-codemod/node_modules/
+-vendor/*
++vendor/react-dom.js
+diff --git a/.travis.yml b/.travis.yml
+index ba63714af4..007320ce56 100644
+--- a/.travis.yml
++++ b/.travis.yml
+@@ -54,8 +54,6 @@ script:
+           -F "react-with-addons.min=@build/react-with-addons.min.js" \
+           -F "react-dom=@build/react-dom.js" \
+           -F "react-dom.min=@build/react-dom.min.js" \
+-          -F "react-dom-server=@build/react-dom-server.js" \
+-          -F "react-dom-server.min=@build/react-dom-server.min.js" \
+           -F "npm-react=@build/packages/react.tgz" \
+           -F "npm-react-dom=@build/packages/react-dom.tgz" \
+           -F "commit=$TRAVIS_COMMIT" \
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index b680b98cdb..2191414b5d 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,19 +1,3 @@
+-## 0.14.3 (November 18, 2015)
+-
+-### React DOM
+-- Added support for `nonce` attribute for `<script>` and `<style>` elements
+-- Added support for `reversed` attribute for `<ol>` elements
+-
+-### React TestUtils Add-on
+-- Fixed bug with shallow rendering and function refs
+-
+-### React CSSTransitionGroup Add-on
+-- Fixed bug resulting in timeouts firing incorrectly when mounting and unmounting rapidly
+-
+-### React on Bower
+-- Added `react-dom-server.js` to expose `renderToString` and `renderToStaticMarkup` for usage in the browser
+-
+nani@git-practice:~/gitlearn/react$
+
+--
+
+tags - when you push code to remote , by default tags won't be pushed , only braches will be pushed 
+
+
+nani@git-practice:~/gitlearn$ mkdir git-tag
+nani@git-practice:~/gitlearn$ cd git-tag/
+nani@git-practice:~/gitlearn/git-tag$ git init
+Initialized empty Git repository in /home/nani/gitlearn/git-tag/.git/
+nani@git-practice:~/gitlearn/git-tag$ git log
+fatal: your current branch 'main' does not have any commits yet
+nani@git-practice:~/gitlearn/git-tag$ echo "This is first commit" > index.txt
+nani@git-practice:~/gitlearn/git-tag$ git add .
+nani@git-practice:~/gitlearn/git-tag$ git commit -m "intial commit"
+[main (root-commit) b02214f] intial commit
+ 1 file changed, 1 insertion(+)
+ create mode 100644 index.txt
+nani@git-practice:~/gitlearn/git-tag$ git log
+commit b02214f2e9fd42e12db2e62b0b07580fb136c7ed (HEAD -> main)
+Author: Nani <nanidevsecops@email.com>
+Date:   Sun Jul 21 10:14:06 2024 +0530
+
+    intial commit
+nani@git-practice:~/gitlearn/git-tag$ git tag
+nani@git-practice:~/gitlearn/git-tag$ git tag v1.0.0
+nani@git-practice:~/gitlearn/git-tag$ git tag
+v1.0.0
+nani@git-practice:~/gitlearn/git-tag$ git log
+commit b02214f2e9fd42e12db2e62b0b07580fb136c7ed (HEAD -> main, tag: v1.0.0)
+Author: Nani <nanidevsecops@email.com>
+Date:   Sun Jul 21 10:14:06 2024 +0530
+
+    intial commit
+nani@git-practice:~/gitlearn/git-tag$
+nani@git-practice:~/gitlearn/git-tag$ echo "This is second commit" >> index.txt
+nani@git-practice:~/gitlearn/git-tag$ git commit -a -m "Second commit"
+[main e7859d2] Second commit
+ 1 file changed, 1 insertion(+)
+nani@git-practice:~/gitlearn/git-tag$ git status
+On branch main
+nothing to commit, working tree clean
+nani@git-practice:~/gitlearn/git-tag$ git log
+commit e7859d2e447c191cbe795aac42d95710836d68b7 (HEAD -> main)
+Author: Nani <nanidevsecops@email.com>
+Date:   Sun Jul 21 10:16:04 2024 +0530
+
+    Second commit
+
+commit b02214f2e9fd42e12db2e62b0b07580fb136c7ed (tag: v1.0.0)
+Author: Nani <nanidevsecops@email.com>
+Date:   Sun Jul 21 10:14:06 2024 +0530
+
+    intial commit
+nani@git-practice:~/gitlearn/git-tag$ cat index.txt
+This is first commit
+This is second commit
+nani@git-practice:~/gitlearn/git-tag$ git checkout v1.0.0
+Note: switching to 'v1.0.0'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at b02214f intial commit
+nani@git-practice:~/gitlearn/git-tag$ cat index.txt
+This is first commit
+nani@git-practice:~/gitlearn/git-tag$ git switch -
+Previous HEAD position was b02214f intial commit
+Switched to branch 'main'
+nani@git-practice:~/gitlearn/git-tag$ cat index.txt
+This is first commit
+This is second commit
+nani@git-practice:~/gitlearn/git-tag$ git log --oneline
+e7859d2 (HEAD -> main) Second commit
+b02214f (tag: v1.0.0) intial commit
+nani@git-practice:~/gitlearn/git-tag$ git tag v1.0.1
+nani@git-practice:~/gitlearn/git-tag$ git tag
+v1.0.0
+v1.0.1
+nani@git-practice:~/gitlearn/git-tag$ git log --oneline
+e7859d2 (HEAD -> main, tag: v1.0.1) Second commit
+b02214f (tag: v1.0.0) intial commit
+nani@git-practice:~/gitlearn/git-tag$ git diff v1.0.0 v1.0.1
+diff --git a/index.txt b/index.txt
+index 65c11a3..6e60142 100644
+--- a/index.txt
++++ b/index.txt
+@@ -1 +1,2 @@
+ This is first commit
++This is second commit
+nani@git-practice:~/gitlearn/git-tag$
+nani@git-practice:~/gitlearn/git-tag$ echo "This file is for new feature" >> newfeature.txt
+nani@git-practice:~/gitlearn/git-tag$ git add .
+nani@git-practice:~/gitlearn/git-tag$ git commit -m "New feature done"
+[main 7f5d5c6] New feature done
+ 1 file changed, 1 insertion(+)
+ create mode 100644 newfeature.txt
+nani@git-practice:~/gitlearn/git-tag$ git log --oneline
+7f5d5c6 (HEAD -> main) New feature done
+e7859d2 (tag: v1.0.1) Second commit
+b02214f (tag: v1.0.0) intial commit
+nani@git-practice:~/gitlearn/git-tag$ git tag -a v1.1.0
+nani@git-practice:~/gitlearn/git-tag$ git tag
+v1.0.0
+v1.0.1
+v1.1.0
+nani@git-practice:~/gitlearn/git-tag$ git show v1.1.0
+tag v1.1.0
+Tagger: Nani <nanidevsecops@email.com>
+Date:   Sun Jul 21 10:22:24 2024 +0530
+
+This is annotated tag created for testing
+
+commit 7f5d5c605c2834491b60a342a492e8604280bc66 (HEAD -> main, tag: v1.1.0)
+Author: Nani <nanidevsecops@email.com>
+Date:   Sun Jul 21 10:21:27 2024 +0530
+
+    New feature done
+
+diff --git a/newfeature.txt b/newfeature.txt
+new file mode 100644
+index 0000000..f29956d
+--- /dev/null
++++ b/newfeature.txt
+@@ -0,0 +1 @@
++This file is for new feature
+nani@git-practice:~/gitlearn/git-tag$
+nani@git-practice:~/gitlearn/git-tag$ git log --oneline
+7f5d5c6 (HEAD -> main, tag: v1.1.0) New feature done
+e7859d2 (tag: v1.0.1) Second commit
+b02214f (tag: v1.0.0) intial commit
+nani@git-practice:~/gitlearn/git-tag$ git show v1.0.0
+commit b02214f2e9fd42e12db2e62b0b07580fb136c7ed (tag: v1.0.0)
+Author: Nani <nanidevsecops@email.com>
+Date:   Sun Jul 21 10:14:06 2024 +0530
+
+    intial commit
+
+diff --git a/index.txt b/index.txt
+new file mode 100644
+index 0000000..65c11a3
+--- /dev/null
++++ b/index.txt
+@@ -0,0 +1 @@
++This is first commit
+nani@git-practice:~/gitlearn/git-tag$
+nani@git-practice:~/gitlearn/git-tag$
+nani@git-practice:~/gitlearn/git-tag$ git remote -v
+nani@git-practice:~/gitlearn/git-tag$ git remote add origin git@github.com:nanidevsecops/git-tag.git
+nani@git-practice:~/gitlearn/git-tag$ git remote -v
+origin git@github.com:nanidevsecops/git-tag.git (fetch)
+origin git@github.com:nanidevsecops/git-tag.git (push)
+nani@git-practice:~/gitlearn/git-tag$
+nani@git-practice:~/gitlearn/git-tag$
+nani@git-practice:~/gitlearn/git-tag$ git log
+commit 7f5d5c605c2834491b60a342a492e8604280bc66 (HEAD -> main, tag: v1.1.0)
+Author: Nani <nanidevsecops@email.com>
+Date:   Sun Jul 21 10:21:27 2024 +0530
+
+    New feature done
+
+commit e7859d2e447c191cbe795aac42d95710836d68b7 (tag: v1.0.1)
+Author: Nani <nanidevsecops@email.com>
+Date:   Sun Jul 21 10:16:04 2024 +0530
+
+    Second commit
+
+commit b02214f2e9fd42e12db2e62b0b07580fb136c7ed (tag: v1.0.0)
+Author: Nani <nanidevsecops@email.com>
+Date:   Sun Jul 21 10:14:06 2024 +0530
+
+    intial commit
+nani@git-practice:~/gitlearn/git-tag$ git push -u origin main
+Enumerating objects: 9, done.
+Counting objects: 100% (9/9), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (9/9), 751 bytes | 93.00 KiB/s, done.
+Total 9 (delta 0), reused 0 (delta 0), pack-reused 0
+To github.com:nanidevsecops/git-tag.git
+ * [new branch]      main -> main
+Branch 'main' set up to track remote branch 'main' from 'origin'.
+nani@git-practice:~/gitlearn/git-tag$
+nani@git-practice:~/gitlearn/git-tag$ git tags
+git: 'tags' is not a git command. See 'git --help'.
+
+The most similar commands are
+ stage
+ tag
+nani@git-practice:~/gitlearn/git-tag$ git tag
+v1.0.0
+v1.0.1
+v1.1.0
+nani@git-practice:~/gitlearn/git-tag$ git push origin v1.0.0
+Total 0 (delta 0), reused 0 (delta 0), pack-reused 0
+To github.com:nanidevsecops/git-tag.git
+ * [new tag]         v1.0.0 -> v1.0.0
+nani@git-practice:~/gitlearn/git-tag$ # To push all the tags to remote repo
+nani@git-practice:~/gitlearn/git-tag$
+nani@git-practice:~/gitlearn/git-tag$ git push origin --tags
+Enumerating objects: 1, done.
+Counting objects: 100% (1/1), done.
+Writing objects: 100% (1/1), 182 bytes | 45.00 KiB/s, done.
+Total 1 (delta 0), reused 0 (delta 0), pack-reused 0
+To github.com:nanidevsecops/git-tag.git
+ * [new tag]         v1.0.1 -> v1.0.1
+ * [new tag]         v1.1.0 -> v1.1.0
+nani@git-practice:~/gitlearn/git-tag$
+
+---
+
+git reflogs
+expire 90 days
+applicable to only local 
+can't be pushed to repo
+restore/recover lost commits  which is not possible withgit 
+
+show,expire,delete,exists
+
+nani@git-practice:~/gitlearn/git-tag$ git reflog show main
+7f5d5c6 (HEAD -> main, tag: v1.1.0, origin/main) main@{0}: commit: New feature done
+e7859d2 (tag: v1.0.1) main@{1}: commit: Second commit
+b02214f (tag: v1.0.0) main@{2}: commit (initial): intial commit
+nani@git-practice:~/gitlearn/git-tag$
+
+
+
+
+
+
+
+
+…or create a new repository on the command line
+echo "# tests" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin git@github.com:nanidevsecops/tests.git
+git push -u origin main
+
+…or push an existing repository from the command line
+git remote add origin git@github.com:nanidevsecops/hw-coo-project-resources.git
+git branch -M main
+git push -u origin main
+
+https://github.com/nanidevsecops/hw-coo-project-resources.git
+
+
+
+
+
+
+
+cherryniks@CherryNiks:~/gh/sudheer$ git push -u origin main
+remote: Permission to nanidevsecops/hw-coo-project-resources.git denied to nanidevsecops.
+fatal: unable to access 'https://github.com/nanidevsecops/hw-coo-project-resources.git/': The requested URL returned error: 403
+cherryniks@CherryNiks:~/gh/sudheer$
+cherryniks@CherryNiks:~/gh/sudheer$
+cherryniks@CherryNiks:~/gh/sudheer$ git config --global credential.helper cache
+cherryniks@CherryNiks:~/gh/sudheer$ git credential-cache exit
+cherryniks@CherryNiks:~/gh/sudheer$ git remote -v
+origin  https://nanidevsecops@github.com/nanidevsecops/hw-coo-project-resources.git (fetch)
+origin  https://nanidevsecops@github.com/nanidevsecops/hw-coo-project-resources.git (push)
+cherryniks@CherryNiks:~/gh/sudheer$
+cherryniks@CherryNiks:~/gh/sudheer$
+cherryniks@CherryNiks:~/gh/sudheer$
+cherryniks@CherryNiks:~/gh/sudheer$
+cherryniks@CherryNiks:~/gh/sudheer$ git remote set-url origin https://nanidevsecops:<Personaltokenclassic>@github.com/nanidevsecops/hw-coo-project-resources.git
+cherryniks@CherryNiks:~/gh/sudheer$ git credential-cache exit^C
+cherryniks@CherryNiks:~/gh/sudheer$
+cherryniks@CherryNiks:~/gh/sudheer$
+cherryniks@CherryNiks:~/gh/sudheer$ git push -u origin main
+git push -u origin main
+Enumerating objects: 3, done.
+Counting objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 233 bytes | 233.00 KiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0), pack-reused 0
+To https://github.com/nanidevsecops/hw-coo-project-resources.git
+ * [new branch]      main -> main
+branch 'main' set up to track 'origin/main'.
+cherryniks@CherryNiks:~/gh/sudheer$ git push -u origin main
+branch 'main' set up to track 'origin/main'.
+Everything up-to-date
+cherryniks@CherryNiks:~/gh/sudheer$
+
