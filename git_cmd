@@ -1,4 +1,7 @@
 generate ssh keys and add public key to profile and check access from local cmd using ssh -T git@github.com
+add remote repo and and then try to push
+git remote set-url origin git@github.com:nanidevsecops/git.git
+git push
 
 git mv
 git restore 1.txt << restore file to before staging area state 
